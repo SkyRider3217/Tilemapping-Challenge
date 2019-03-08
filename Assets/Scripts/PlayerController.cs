@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour {
 
+    Animator anim;
+
     public float speed;
 	public float jumpForce;
     public Text countText;
@@ -30,22 +32,39 @@ public class PlayerController : MonoBehaviour {
         winText.text = "";
         loseText.text = "";
 
+        anim = GetComponent<Animator>();
+
         musicSource.clip = musicClipOne;
         musicSource.Play();
     }
-	
+
     void FixedUpdate()
     {
         float moveHorizontal = Input.GetAxis ("Horizontal");
 		Vector2 movement = new Vector2(moveHorizontal, 0);
         rb2d.AddForce (movement * speed);
 
-        if (count == 4) 
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            transform.position = new Vector2(67.1f, -8.28f);
+            anim.SetInteger("State", 1);
         }
-		
-		if (Input.GetKey("escape"))
+
+        if (Input.GetKeyUp(KeyCode.LeftArrow))
+        {
+            anim.SetInteger("State", 0);
+        }
+
+        if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            anim.SetInteger("State", 1);
+        }
+
+        if (Input.GetKeyUp(KeyCode.RightArrow))
+        {
+            anim.SetInteger("State", 0);
+        }
+
+        if (Input.GetKey("escape"))
 		{
 		Application.Quit();
 		}
@@ -88,19 +107,28 @@ public class PlayerController : MonoBehaviour {
 
     void OnCollisionStay2D(Collision2D collision)
     {
-        if(collision.collider.tag == "Ground")
-		{
-			if(Input.GetKey(KeyCode.UpArrow))
-			{
-				rb2d.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
-			}
-		}
-		
+        if (collision.collider.tag == "Ground")
+        {
+            anim.SetBool("Ground", true);
+
+            if (Input.GetKey(KeyCode.UpArrow))
+            {
+                anim.SetBool("Ground", false);
+                anim.SetInteger("State", 2);
+                rb2d.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
+            } 
+        }
+
     }
 
     void SetCountText()
     {
         countText.text = "Count: " + count.ToString();
+
+        if (count == 4)
+        {
+            transform.position = new Vector2(67.1f, -8.28f);
+        }
 
         if (count >= 8)
         {
