@@ -11,7 +11,9 @@ public class PlayerController : MonoBehaviour {
     public Text livesText;
     public Text winText;
     public Text loseText;
-
+    public AudioClip musicClipOne;
+    public AudioClip musicClipTwo;
+    public AudioSource musicSource;
 
     private Rigidbody2D rb2d;
     private int count;
@@ -27,6 +29,9 @@ public class PlayerController : MonoBehaviour {
         SetLivesText();
         winText.text = "";
         loseText.text = "";
+
+        musicSource.clip = musicClipOne;
+        musicSource.Play();
     }
 	
     void FixedUpdate()
@@ -37,7 +42,7 @@ public class PlayerController : MonoBehaviour {
 
         if (count == 4) 
         {
-            transform.position = new Vector3(67.1f, -8.28f);
+            transform.position = new Vector2(67.1f, -8.28f);
         }
 		
 		if (Input.GetKey("escape"))
@@ -95,10 +100,15 @@ public class PlayerController : MonoBehaviour {
 
     void SetCountText()
     {
-        countText.text = "Count: " + count.ToString ();
+        countText.text = "Count: " + count.ToString();
 
         if (count >= 8)
+        {
+            musicSource.clip = musicClipTwo;
+            musicSource.Play();
             winText.text = "You win!";
+            
+        }
     }
 
     void SetLivesText()
